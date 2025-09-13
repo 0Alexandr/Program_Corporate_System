@@ -1,4 +1,6 @@
-﻿class Calculator
+using System;
+
+class Calculator
 {
     static double memory = 0;
 
@@ -6,11 +8,13 @@
     {
         double result = 0;
         bool exit = false;
+        bool divisionByZero = true;
 
         Console.WriteLine("Калькулятор (+, -, *, /, %, 1/x, x^2, sqrt, M+, M-, MR, exit)");
 
         while (!exit)
         {
+            divisionByZero = true;
             Console.Write("\nВведите выражение или команду: ");
             string input = Console.ReadLine();
 
@@ -32,7 +36,6 @@
                 memory -= result;
                 Console.WriteLine($"Память: {memory}");
             }
-
             else
             {
                 string[] parts = input.Split(' ');
@@ -79,7 +82,6 @@
                                 break;
                         }
                     }
-
                     else if (parts.Length == 3) // бинарные операции
                     {
                         double a = Convert.ToDouble(parts[0]);
@@ -103,6 +105,7 @@
                             case "/":
                                 if (b == 0)
                                 {
+                                    divisionByZero = false;
                                     Console.WriteLine("Ошибка: деление на 0!");
                                 }
                                 else
@@ -114,6 +117,7 @@
                             case "%":
                                 if (b == 0)
                                 {
+                                    divisionByZero = false;
                                     Console.WriteLine("Ошибка: деление на 0!");
                                 }
                                 else
@@ -125,8 +129,10 @@
                                 Console.WriteLine("Неизвестная операция.");
                                 break;
                         }
-
-                        Console.WriteLine($"Результат = {result}");
+                        if (divisionByZero)
+                        {
+                            Console.WriteLine($"Результат = {result}");
+                        }
                     }
                     else
                     {
