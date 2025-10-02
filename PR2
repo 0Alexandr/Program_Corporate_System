@@ -1,0 +1,83 @@
+# Практика 2
+
+## Задание 1 (15 вариант)
+using System;
+
+class Program
+{   // Вариант 15 (№1)
+    // Вычисление двойного факториала (n!!)
+    // Для чётных n: n!! = 2 * 4 * 6 * ... * n
+    // Для нечётных n: n!! = 1 * 3 * 5 * ... * n
+    static double DoubleFactorial(int n)
+    {
+        double result = 1;
+        for (int i = n; i > 0; i -= 2)
+        {
+            result *= i;
+        }
+        return result;
+    }
+
+    // Вычисление n-го члена ряда для arcsin x
+    // T_n = [(2n-1)!! / (2n)!!] * [x^(2n+1) / (2n+1)]
+    static double GetNthTerm(double x, int n)
+    {
+        if (n == 0)
+        {
+            return x; // Первый член: x^1 / 1 = x
+        }
+
+        double numerator = DoubleFactorial(2 * n - 1);
+        double denominator = DoubleFactorial(2 * n);
+        double coefficient = numerator / denominator;
+        double powerTerm = Math.Pow(x, 2 * n + 1);
+
+        return coefficient * powerTerm / (2 * n + 1);
+    }
+
+    // Вычисление arcsin x с заданной точностью
+    static double CalculateArcsin(double x, double epsilon)
+    {
+        double sum = 0;
+        double term;
+        int n = 0;
+
+        do
+        {
+            term = GetNthTerm(x, n);
+            sum += term;
+            n++;
+        } while (Math.Abs(term) > epsilon && n < 1000); // Защита от бесконечного цикла
+
+        return sum;
+    }
+
+    static void Main()
+    {
+        Console.WriteLine("Введите x (|x| < 1):");
+        double x = double.Parse(Console.ReadLine());
+
+        if (Math.Abs(x) >= 1)
+        {
+            Console.WriteLine("Ошибка: |x| должен быть < 1");
+            return;
+        }
+
+        Console.WriteLine("Введите точность e (e < 0.01):");
+        double epsilon = double.Parse(Console.ReadLine());
+        if (epsilon >= 0.01)
+        {
+            Console.WriteLine("Точность должна быть меньше 0.01");
+            return;
+        }
+
+        double result = CalculateArcsin(x, epsilon);
+        Console.WriteLine($"arcsin({x}) с точностью {epsilon}: {result}");
+        Console.WriteLine($"Проверка через Math.Asin: {Math.Asin(x)}");
+
+        Console.WriteLine("Введите номер члена ряда (n):");
+        int n = int.Parse(Console.ReadLine());
+        double nthTerm = GetNthTerm(x, n);
+        Console.WriteLine($"Значение {n}-го члена ряда: {nthTerm}");
+    }
+}
